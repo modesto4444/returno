@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Lost Item - Returno</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="icons/chain.png">
+</head>
+<body>
+    <!-- Form Page -->
+    <main class="form-page">
+        <!-- Back Button Header -->
+        <div class="form-header-bar">
+            <a href="index.html" class="back-button">
+                <span class="back-arrow">‹</span> Back to Home
+            </a>
+        </div>
+
+        <!-- Wave Background with Form -->
+        <div class="form-background">
+            <div class="form-card-wrapper">
+                <div class="form-card">
+                    <div class="form-title">
+                        <h2>Report Lost Item</h2>
+                        <p>Your report will be recorded permanently for verification</p>
+                    </div>
+
+                    <form id="lostItemForm" class="report-form">
+                        <!-- Item Name -->
+                        <div class="form-group">
+                            <label for="itemName">Item Name / Short Description</label>
+                            <input 
+                                type="text" 
+                                id="itemName" 
+                                name="itemName" 
+                                placeholder="e.g. Black leather wallet"
+                                required>
+                            <small class="form-hint">Be specific but avoid personal details</small>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <select id="category" name="category" required>
+                                <option value="" disabled selected>Select a category</option>
+                                <option value="electronics">Electronics</option>
+                                <option value="wallet">Wallet / Purse</option>
+                                <option value="bag">Bag / Backpack</option>
+                                <option value="keys">Keys</option>
+                                <option value="documents">Documents / ID</option>
+                                <option value="jewelry">Jewelry / Accessories</option>
+                                <option value="clothing">Clothing</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Last Known Location -->
+                        <div class="form-group">
+                            <label for="location">Last Known Location</label>
+                            <input 
+                                type="text" 
+                                id="location" 
+                                name="location" 
+                                placeholder="e.g. coffee shop, Main Street"
+                                required>
+                        </div>
+
+                        <!-- Date Lost -->
+                        <div class="form-group">
+                            <label for="dateLost">Date Lost</label>
+                            <input 
+                                type="date" 
+                                id="dateLost" 
+                                name="dateLost" 
+                                required>
+                        </div>
+
+                        <!-- Email Address -->
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input 
+                                type="email" 
+                                id="email" 
+                                name="email" 
+                                placeholder="you@email.com"
+                                required>
+                            <small class="form-hint">Your email will not be stored on the blockchain</small>
+                        </div>
+
+                        <!-- Blockchain Notice -->
+                        <div class="blockchain-notice">
+                            <div class="notice-header">
+                                <span class="info-icon">ⓘ</span>
+                                <strong>Blockchain Report</strong>
+                            </div>
+                            <p>Your report will be permanently recorded on the blockchain with a timestamp. This creates an immutable, verifiable record that proves when you reported the item.</p>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn-submit">
+                            Submit Item Lost Report
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

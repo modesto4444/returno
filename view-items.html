@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Reported Items - Returno</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="icons/chain.png">
+</head>
+<body>
+    <main class="view-page">
+        <!-- Back Button Header -->
+        <div class="form-header-bar">
+            <a href="index.html" class="back-button">
+                <span class="back-arrow">‹</span> Back to Home
+            </a>
+        </div>
+
+        <!-- Page Content -->
+        <div class="view-content">
+            <!-- Search & Filter Bar -->
+            <div class="search-bar-wrapper">
+                <div class="search-bar">
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="search-input" 
+                        placeholder="Black leather wallet">
+                    
+                    <select id="typeFilter" class="filter-dropdown">
+                        <option value="all">All types</option>
+                        <option value="lost">Lost</option>
+                        <option value="found">Found</option>
+                    </select>
+
+                    <select id="categoryFilter" class="filter-dropdown">
+                        <option value="all">Categories</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="wallet">Wallet / Purse</option>
+                        <option value="bag">Bag / Backpack</option>
+                        <option value="keys">Keys</option>
+                        <option value="documents">Documents / ID</option>
+                        <option value="jewelry">Jewelry / Accessories</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Items Grid -->
+            <div class="items-grid" id="itemsGrid">
+                <!-- Items rendered dynamically by script.js -->
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

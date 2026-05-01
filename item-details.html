@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Details - Returno</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="icons/chain.png">
+</head>
+<body>
+    <main class="detail-page">
+        <!-- Header Bar with Title -->
+        <div class="form-header-bar detail-page-header">
+            <a href="view-items.html" class="back-button">
+                <span class="back-arrow">‹</span> Back to Items
+            </a>
+            <h1 class="detail-page-title">Item Details</h1>
+            <div class="header-spacer"></div>
+        </div>
+
+        <!-- Detail Card -->
+        <div class="detail-content">
+            <div class="detail-card-wrapper">
+                <div class="detail-card">
+                    <!-- Left: Colored Banner with Icon -->
+                    <div class="detail-banner" id="detailBanner">
+                        <img id="detailIcon" src="" alt="">
+                    </div>
+
+                    <!-- Right: Item Information -->
+                    <div class="detail-info">
+                        <!-- Header Row: Status + Verified -->
+                        <div class="detail-header-row">
+                            <span class="status-badge-large" id="detailStatusBadge"></span>
+                            <span class="verified-blockchain" id="detailVerified"></span>
+                        </div>
+
+                        <!-- Title -->
+                        <h2 class="detail-title" id="detailTitle"></h2>
+
+                        <!-- Description -->
+                        <div class="detail-section">
+                            <div class="detail-label">Description</div>
+                            <div class="detail-value" id="detailDescription"></div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="detail-section">
+                            <div class="detail-label">Category</div>
+                            <div class="detail-value" id="detailCategory"></div>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="detail-section">
+                            <div class="detail-label" id="detailLocationLabel"></div>
+                            <div class="detail-value" id="detailLocation"></div>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="detail-section">
+                            <div class="detail-label" id="detailDateLabel"></div>
+                            <div class="detail-value" id="detailDate"></div>
+                        </div>
+
+                        <!-- Blockchain Information Box -->
+                        <div class="blockchain-info-box">
+                            <div class="blockchain-info-header">
+                                <span class="blockchain-info-title">
+                                    <img src="icons/locked.png" alt="" class="info-box-icon">
+                                    Blockchain Information
+                                </span>
+                                <span class="blockchain-info-id" id="detailBlockchainId"></span>
+                            </div>
+                            <div class="blockchain-info-row">
+                                <span class="blockchain-info-key">Item ID:</span>
+                                <span class="blockchain-info-value" id="detailItemId"></span>
+                            </div>
+                            <div class="blockchain-info-row">
+                                <span class="blockchain-info-key">Block Timestamp:</span>
+                                <span class="blockchain-info-value" id="detailTimestamp"></span>
+                            </div>
+                            <div class="blockchain-info-row">
+                                <span class="blockchain-info-key">Block Hash:</span>
+                                <span class="blockchain-info-value" id="detailHash"></span>
+                            </div>
+                        </div>
+
+                        <!-- Potential Match Found Box -->
+                        <div class="match-found-box" id="detailMatchBox">
+                            <div class="match-found-header">
+                                <img src="icons/caution.png" alt="" class="info-box-icon">
+                                <strong>Potential Match Found</strong>
+                            </div>
+                            <p class="match-found-text">A similar item was reported found. Click below to compare details.</p>
+                            <button class="btn-match" onclick="handleViewMatch()">View Match Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                <!-- ============== MATCH DETAILS MODAL ============== -->
+        <div class="modal-overlay" id="matchModal">
+            <div class="modal-card-wrapper">
+                <div class="modal-card">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h2 class="modal-title">Potential Match Details</h2>
+                        <button class="modal-close" onclick="closeMatchModal()" aria-label="Close">×</button>
+                    </div>
+
+                    <!-- Comparison Cards -->
+                    <div class="comparison-grid">
+                        <!-- Lost Item Card -->
+                        <div class="comparison-card lost">
+                            <span class="status-badge-large lost" id="modalLostBadge">LOST ITEM</span>
+                            <h3 class="comparison-title" id="modalLostTitle"></h3>
+                            <div class="comparison-row">
+                                <span class="comparison-label">Category:</span>
+                                <span class="comparison-value" id="modalLostCategory"></span>
+                            </div>
+                            <div class="comparison-row">
+                                <span class="comparison-label">Location:</span>
+                                <span class="comparison-value" id="modalLostLocation"></span>
+                            </div>
+                            <div class="comparison-row">
+                                <span class="comparison-label">Date:</span>
+                                <span class="comparison-value" id="modalLostDate"></span>
+                            </div>
+                            <div class="comparison-row">
+                                <span class="comparison-label">Description:</span>
+                                <span class="comparison-value" id="modalLostDescription"></span>
+                            </div>
+                        </div>
+
+                        <!-- Found Item Card -->
+                        <div class="comparison-card found">
+                            <span class="status-badge-large found" id="modalFoundBadge">FOUND ITEM</span>
+                            <h3 class="comparison-title" id="modalFoundTitle"></h3>
+                            <div class="comparison-row">
+                                <span class="comparison-label">Category:</span>
+                                <span class="comparison-value" id="modalFoundCategory"></span>
+                            </div>
+                            <div class="comparison-row">
+                                <span class="comparison-label">Location:</span>
+                                <span class="comparison-value" id="modalFoundLocation"></span>
+                            </div>
+                            <div class="comparison-row">
+                                <span class="comparison-label">Date:</span>
+                                <span class="comparison-value" id="modalFoundDate"></span>
+                            </div>
+                            <div class="comparison-row">
+                                <span class="comparison-label">Description:</span>
+                                <span class="comparison-value" id="modalFoundDescription"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Matching Criteria -->
+                    <div class="criteria-section">
+                        <h3 class="criteria-title">Matching Criteria</h3>
+                        <div class="criteria-list" id="criteriaList">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Next Steps Notice -->
+                    <div class="next-steps-box">
+                        <p>
+                            <strong>Next Steps:</strong> Contact the finder to verify if this is your item. Both reports are blockchain-verified with timestamps, ensuring transparency.
+                        </p>
+                    </div>
+
+                    <!-- Contact Button -->
+                    <button class="btn-contact-finder" onclick="handleContactFinder()">
+                        Contact Finder Now
+                    </button>
+                </div>
+            </div>
+        </div>
+
+                <!-- ============== CONTACT MODAL ============== -->
+        <div class="modal-overlay" id="contactModal">
+            <div class="modal-card-wrapper">
+                <div class="modal-card">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h2 class="modal-title">Contact About This Item</h2>
+                        <button class="modal-close" onclick="closeContactModal()" aria-label="Close">×</button>
+                    </div>
+
+                    <!-- Privacy Protected Notice -->
+                    <div class="privacy-notice">
+                        <div class="privacy-notice-icon">
+                            <img src="icons/locked.png" alt="">
+                        </div>
+                        <div class="privacy-notice-content">
+                            <strong class="privacy-notice-title">Privacy Protected</strong>
+                            <p>Your contact information will only be shared after the finder confirms. Both parties must consent before personal details are exchanged.</p>
+                        </div>
+                    </div>
+
+                    <!-- Contact Form -->
+                    <form id="contactForm" class="report-form contact-form">
+                        <!-- Your Name -->
+                        <div class="form-group">
+                            <label for="contactName">Your Name</label>
+                            <input 
+                                type="text" 
+                                id="contactName" 
+                                name="contactName" 
+                                placeholder="John Doe"
+                                required>
+                        </div>
+
+                        <!-- Your Email -->
+                        <div class="form-group">
+                            <label for="contactEmail">Your Email</label>
+                            <input 
+                                type="email" 
+                                id="contactEmail" 
+                                name="contactEmail" 
+                                placeholder="youremail.com"
+                                required>
+                        </div>
+
+                        <!-- Phone Number (Optional) -->
+                        <div class="form-group">
+                            <label for="contactPhone">Phone Number (Optional)</label>
+                            <input 
+                                type="tel" 
+                                id="contactPhone" 
+                                name="contactPhone" 
+                                placeholder="+63 999 0000 111">
+                        </div>
+
+                        <!-- Message -->
+                        <div class="form-group">
+                            <label for="contactMessage">Message</label>
+                            <textarea 
+                                id="contactMessage" 
+                                name="contactMessage" 
+                                rows="3"
+                                placeholder="Hi, I believe this is my wallet. It has my ID and cards with it......"
+                                required></textarea>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn-contact-finder">
+                            Send Contact Request
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
