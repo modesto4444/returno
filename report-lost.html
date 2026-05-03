@@ -11,7 +11,9 @@
     <link rel="icon" type="image/png" href="icons/chain.png">
 </head>
 <body>
+
     <main class="form-page">
+
         <!-- Back Button Header -->
         <div class="form-header-bar">
             <a href="index.html" class="back-button">
@@ -19,27 +21,31 @@
             </a>
         </div>
 
-        <!-- Background with Form -->
+        <!-- Background + Form -->
         <div class="form-background">
             <div class="form-card-wrapper">
                 <div class="form-card">
+
                     <div class="form-title">
                         <h2>Report Lost Item</h2>
                         <p>Your report will be recorded permanently for verification</p>
                     </div>
 
                     <form id="lostItemForm" class="report-form">
+
+                        <!-- Item Name -->
                         <div class="form-group">
                             <label for="itemName">Item Name / Short Description</label>
-                            <input 
-                                type="text" 
-                                id="itemName" 
-                                name="itemName" 
+                            <input
+                                type="text"
+                                id="itemName"
+                                name="itemName"
                                 placeholder="e.g. Black leather wallet"
                                 required>
                             <small class="form-hint">Be specific but avoid personal details</small>
                         </div>
 
+                        <!-- Category -->
                         <div class="form-group">
                             <label for="category">Category</label>
                             <select id="category" name="category" required>
@@ -55,109 +61,72 @@
                             </select>
                         </div>
 
+                        <!-- Last Known Location -->
                         <div class="form-group">
                             <label for="location">Last Known Location</label>
-                            <input 
-                                type="text" 
-                                id="location" 
-                                name="location" 
-                                placeholder="e.g. coffee shop, Main Street"
+                            <input
+                                type="text"
+                                id="location"
+                                name="location"
+                                placeholder="e.g. Coffee shop on Main Street"
                                 required>
                         </div>
 
+                        <!-- Date Lost -->
                         <div class="form-group">
                             <label for="dateLost">Date Lost</label>
-                            <input 
-                                type="date" 
-                                id="dateLost" 
-                                name="dateLost" 
+                            <input
+                                type="date"
+                                id="dateLost"
+                                name="dateLost"
                                 required>
                         </div>
 
+                        <!-- Description -->
                         <div class="form-group">
                             <label for="description">Item Description</label>
-                            <textarea 
-                                id="description" 
-                                name="description" 
+                            <textarea
+                                id="description"
+                                name="description"
                                 rows="3"
-                                placeholder="Describe the item in detail color, brand, distinguishing features..."
+                                placeholder="Describe the item in detail — color, brand, distinguishing features..."
                                 required></textarea>
                             <small class="form-hint">The more detail, the better the match</small>
                         </div>
 
+                        <!-- Email -->
                         <div class="form-group">
                             <label for="email">Email Address</label>
-                            <input 
-                                type="email" 
-                                id="email" 
-                                name="email" 
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
                                 placeholder="you@email.com"
                                 required>
                             <small class="form-hint">Your email will not be stored on the blockchain</small>
                         </div>
 
+                        <!-- Blockchain Notice -->
                         <div class="blockchain-notice">
                             <div class="notice-header">
-                                <span class="info-icon">ⓘ</span>
+                                <span class="info-icon">i</span>
                                 <strong>Blockchain Report</strong>
                             </div>
                             <p>Your report will be permanently recorded on the blockchain with a timestamp. This creates an immutable, verifiable record that proves when you reported the item.</p>
                         </div>
 
+                        <!-- Submit -->
                         <button type="submit" class="btn-submit">
                             Submit Item Lost Report
                         </button>
+
                     </form>
                 </div>
             </div>
         </div>
+
     </main>
 
-    <!-- Success Modal -->
-    <div class="success-modal-overlay" id="successModal">
-        <div class="success-modal">
-            <div class="success-icon-wrapper">
-                <div class="success-icon">✓</div>
-            </div>
-            <h2 class="success-title">Report Recorded Successfully</h2>
-            <p class="success-subtitle">Your report has been permanently stored on the blockchain.</p>
-
-            <div class="success-id-box">
-                <span class="success-id-label">Record ID</span>
-                <span class="success-id-value" id="successRecordId">—</span>
-            </div>
-
-            <div class="success-notice">
-                <span class="success-notice-icon">ℹ</span>
-                <p>This record is tamper-proof and publicly verifiable. Save your Record ID to look it up anytime in <strong>View Reported Items</strong>.</p>
-            </div>
-
-            <div class="success-match-box" id="successMatchBox" style="display:none;">
-                <span>🔗</span>
-                <p>A potential match was found: <strong id="successMatchId"></strong></p>
-            </div>
-
-            <button class="success-btn" id="successBtn">Done</button>
-        </div>
-    </div>
-
     <script src="script.js"></script>
-
-    <script>
-        const bg = document.querySelector('.form-background');
-        for (let i = 0; i < 10; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            const size = Math.random() * 6 + 3;
-            p.style.cssText = `
-                width: ${size}px;
-                height: ${size}px;
-                left: ${Math.random() * 100}%;
-                animation-duration: ${Math.random() * 14 + 10}s;
-                animation-delay: ${Math.random() * 10}s;
-            `;
-            bg.appendChild(p);
-        }
-    </script>
 </body>
 </html>
