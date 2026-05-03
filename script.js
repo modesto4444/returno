@@ -1,43 +1,67 @@
-a// ===== API Base URL =====
+// ===== API Base URL =====
 const API = 'http://localhost:3000';
 
 // ===== Global Items Cache =====
 let allItems = [];
 
 // ===== Toast Notification System =====
-const TOAST_ICONS = { success: '✓', error: '✕', info: 'i' };
-let toastTimer = null;
+let toastTimeout = null;
 
-function showToast(type = 'info', title = '', message = '', duration = 4500) {
-    const existing = document.querySelector('.toast');
-    if (existing) existing.remove();
-    clearTimeout(toastTimer);
+function showToast({ type = 'info', title, message, duration = 4000 }) {
+    let toast = document.getElementById('appToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'appToast';
+        toast.className = 'toast';
+        toast.innerHTML = `
+            <div class="toast-icon" id="toastIcon"></div>
+            <div class="toast-body">
+                <div class="toast-title" id="toastTitle"></div>
+                <div class="toast-message" id="toastMessage"></div>
+            </div>
+            <button class="toast-close" onclick="hideToast()">✕</button>
+        `;
+        document.body.appendChild(toast);
+    }
 
-    const toast = document.createElement('div');
+    const icons = { success: '✓', error: '✕', info: 'i' };
+
     toast.className = `toast ${type}`;
-    toast.innerHTML = `
-        <div class="toast-icon">${TOAST_ICONS[type] ?? 'i'}</div>
-        <div class="toast-body">
-            <div class="toast-title">${title}</div>
-            ${message ? `<div class="toast-message">${message}</div>` : ''}
-        </div>
-        <button class="toast-close" aria-label="Dismiss">✕</button>
-    `;
+    document.getElementById('toastIcon').textContent    = icons[type] || 'i';
+    document.getElementById('toastTitle').textContent   = title;
+    document.getElementById('toastMessage').textContent = message;
 
-    document.body.appendChild(toast);
-    requestAnimationFrame(() => requestAnimationFrame(() => toast.classList.add('show')));
-
-    toast.querySelector('.toast-close').addEventListener('click', () => dismissToast(toast));
-    toastTimer = setTimeout(() => dismissToast(toast), duration);
-}
-
-function dismissToast(toast) {
-    if (!toast) return;
+    // Force reflow so transition fires even if toast is already visible
     toast.classList.remove('show');
-    toast.addEventListener('transitionend', () => toast.remove(), { once: true });
+    void toast.offsetWidth;
+    toast.classList.add('show');
+
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(hideToast, duration);
 }
 
-// ===== Card button actions =====
+function hideToast() {
+    const toast = document.getElementById('appToast');
+    if (toast) toast.classList.remove('show');
+}
+
+// ===== Modal Description Helper =====
+function setModalDescription(elementId, text) {
+    const el = document.getElementById(elementId);
+    if (!el) return;
+    const trimmed = (text || '').trim();
+    if (!trimmed) {
+        el.innerHTML = '<em style="color:#aaa;font-style:italic;font-size:0.78rem;">No description provided</em>';
+    } else {
+        const maxLen = 120;
+        el.textContent = trimmed.length > maxLen ? trimmed.slice(0, maxLen) + '…' : trimmed;
+        el.style.fontSize   = '0.82rem';
+        el.style.color      = '#444';
+        el.style.lineHeight = '1.45';
+    }
+}
+
+// ===== Card Button Actions =====
 function handleAction(type) {
     switch(type) {
         case 'lost':  window.location.href = 'report-lost.html';  break;
@@ -96,21 +120,20 @@ async function loadItems() {
     } catch (err) {
         console.error('Failed to load items:', err);
         if (grid) grid.innerHTML = '<div class="empty-state">Failed to connect to blockchain. Make sure the server is running.</div>';
-        showToast('error', 'Connection Failed', 'Could not reach the blockchain server.');
     }
 }
 
 // ===== Filter Logic =====
 function filterItems() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-    const typeFilter = document.getElementById('typeFilter').value;
+    const searchTerm     = document.getElementById('searchInput').value.toLowerCase().trim();
+    const typeFilter     = document.getElementById('typeFilter').value;
     const categoryFilter = document.getElementById('categoryFilter').value;
 
     const filtered = allItems.filter(item => {
-        const matchesSearch = !searchTerm ||
+        const matchesSearch   = !searchTerm ||
             item.title.toLowerCase().includes(searchTerm) ||
             item.location.toLowerCase().includes(searchTerm);
-        const matchesType = typeFilter === 'all' || item.type === typeFilter;
+        const matchesType     = typeFilter === 'all' || item.type === typeFilter;
         const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
         return matchesSearch && matchesType && matchesCategory;
     });
@@ -152,13 +175,13 @@ async function populateItemDetails() {
         if (item.verified) {
             verified.textContent = '✓ Verified on Blockchain';
         } else {
-            verified.textContent = 'Pending Verification';
-            verified.style.color = '#888';
+            verified.textContent  = 'Pending Verification';
+            verified.style.color  = '#888';
         }
 
-        document.getElementById('detailTitle').textContent = item.title;
-        document.getElementById('detailDescription').textContent = item.description;
-        document.getElementById('detailCategory').textContent = item.categoryLabel;
+        document.getElementById('detailTitle').textContent       = item.title;
+        document.getElementById('detailDescription').textContent = item.description || 'No description provided.';
+        document.getElementById('detailCategory').textContent    = item.categoryLabel;
 
         document.getElementById('detailLocationLabel').textContent =
             item.type === 'lost' ? 'Last Known Location' : 'Found Location';
@@ -169,9 +192,9 @@ async function populateItemDetails() {
         document.getElementById('detailDate').textContent = item.date;
 
         document.getElementById('detailBlockchainId').textContent = item.id;
-        document.getElementById('detailItemId').textContent = item.id;
-        document.getElementById('detailTimestamp').textContent = item.blockTimestamp;
-        document.getElementById('detailHash').textContent = item.blockHash;
+        document.getElementById('detailItemId').textContent       = item.id;
+        document.getElementById('detailTimestamp').textContent    = item.blockTimestamp;
+        document.getElementById('detailHash').textContent         = item.blockHash;
 
         if (!item.hasMatch) {
             document.getElementById('detailMatchBox').style.display = 'none';
@@ -181,7 +204,6 @@ async function populateItemDetails() {
 
     } catch (err) {
         console.error('Failed to load item details:', err);
-        showToast('error', 'Load Failed', 'Could not fetch item details from the server.');
     }
 }
 
@@ -195,29 +217,29 @@ async function handleViewMatch() {
         const currentItem = await res.json();
 
         if (!currentItem.matchesWith) {
-            showToast('info', 'No Match Yet', 'No matching item has been found yet.');
+            showToast({ type: 'info', title: 'No Match Yet', message: 'No matching item has been found yet.' });
             return;
         }
 
-        const matchRes = await fetch(`${API}/api/items/${currentItem.matchesWith}`);
+        const matchRes    = await fetch(`${API}/api/items/${currentItem.matchesWith}`);
         const matchedItem = await matchRes.json();
 
         const lostItem  = currentItem.type === 'lost'  ? currentItem : matchedItem;
         const foundItem = currentItem.type === 'found' ? currentItem : matchedItem;
 
-        document.getElementById('modalLostTitle').textContent       = lostItem.title;
-        document.getElementById('modalLostCategory').textContent    = lostItem.categoryLabel;
-        document.getElementById('modalLostLocation').textContent    = lostItem.locationFull;
-        document.getElementById('modalLostDate').textContent        = lostItem.date;
-        document.getElementById('modalLostDescription').textContent = lostItem.description;
+        document.getElementById('modalLostTitle').textContent    = lostItem.title;
+        document.getElementById('modalLostCategory').textContent = lostItem.categoryLabel;
+        document.getElementById('modalLostLocation').textContent = lostItem.locationFull;
+        document.getElementById('modalLostDate').textContent     = lostItem.date;
+        setModalDescription('modalLostDescription', lostItem.description);
 
-        document.getElementById('modalFoundTitle').textContent       = foundItem.title;
-        document.getElementById('modalFoundCategory').textContent    = foundItem.categoryLabel;
-        document.getElementById('modalFoundLocation').textContent    = foundItem.locationFull;
-        document.getElementById('modalFoundDate').textContent        = foundItem.date;
-        document.getElementById('modalFoundDescription').textContent = foundItem.description;
+        document.getElementById('modalFoundTitle').textContent    = foundItem.title;
+        document.getElementById('modalFoundCategory').textContent = foundItem.categoryLabel;
+        document.getElementById('modalFoundLocation').textContent = foundItem.locationFull;
+        document.getElementById('modalFoundDate').textContent     = foundItem.date;
+        setModalDescription('modalFoundDescription', foundItem.description);
 
-        const criteria     = buildMatchingCriteria(lostItem, foundItem);
+        const criteria = buildMatchingCriteria(lostItem, foundItem);
         const criteriaList = document.getElementById('criteriaList');
         criteriaList.innerHTML = criteria.map(c => `
             <div class="criteria-row">
@@ -231,7 +253,7 @@ async function handleViewMatch() {
 
     } catch (err) {
         console.error('Failed to load match:', err);
-        showToast('error', 'Match Load Failed', 'Could not load match details. Please try again.');
+        showToast({ type: 'error', title: 'Failed to Load', message: 'Could not load match details. Please try again.' });
     }
 }
 
@@ -239,28 +261,28 @@ function buildMatchingCriteria(lost, found) {
     const criteria = [];
 
     criteria.push({
-        text: `Same category (${lost.categoryLabel})`,
+        text:    `Same category (${lost.categoryLabel})`,
         matched: lost.category === found.category
     });
 
-    const lostLocWords  = lost.locationFull.toLowerCase().split(/\s+/);
-    const foundLocWords = found.locationFull.toLowerCase().split(/\s+/);
+    const lostLocWords   = lost.locationFull.toLowerCase().split(/\s+/);
+    const foundLocWords  = found.locationFull.toLowerCase().split(/\s+/);
     const sharedLocation = lostLocWords.find(w => w.length > 2 && foundLocWords.includes(w));
     criteria.push({
-        text: `Same location area (${sharedLocation ? capitalize(sharedLocation) + ' area' : 'different'})`,
+        text:    `Same location area (${sharedLocation ? capitalize(sharedLocation) + ' area' : 'different'})`,
         matched: !!sharedLocation
     });
 
     criteria.push({
-        text: `Same date (${lost.date})`,
+        text:    `Same date (${lost.date})`,
         matched: lost.date === found.date
     });
 
-    const lostDescWords  = lost.description.toLowerCase().split(/\W+/).filter(w => w.length > 3);
-    const foundDescWords = found.description.toLowerCase().split(/\W+/).filter(w => w.length > 3);
+    const lostDescWords  = (lost.description  || '').toLowerCase().split(/\W+/).filter(w => w.length > 3);
+    const foundDescWords = (found.description || '').toLowerCase().split(/\W+/).filter(w => w.length > 3);
     const sharedWords    = lostDescWords.filter(w => foundDescWords.includes(w));
     criteria.push({
-        text: `Similar description keywords (${sharedWords.slice(0, 3).join(', ') || 'none'})`,
+        text:    `Similar description keywords (${sharedWords.slice(0, 3).join(', ') || 'none'})`,
         matched: sharedWords.length >= 1
     });
 
@@ -303,14 +325,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fadeElements.forEach(el => observer.observe(el));
 
-    // ===== Lost Item Form =====
+    // ===== Lost Item Form Handler =====
     const lostItemForm = document.getElementById('lostItemForm');
     if (lostItemForm) {
         lostItemForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const submitBtn = lostItemForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
             submitBtn.textContent = 'Submitting...';
             submitBtn.disabled = true;
 
@@ -319,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        type: 'lost',
+                        type:        'lost',
                         itemName:    document.getElementById('itemName').value,
                         category:    document.getElementById('category').value,
                         location:    document.getElementById('location').value,
@@ -332,37 +353,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
 
                 if (res.ok) {
-                    if (data.matchFound) {
-                        showToast('success', 'Report Recorded + Match Found!',
-                            `ID: ${data.item.id} — Potential match: ${data.matchedWith}`);
-                    } else {
-                        showToast('success', 'Report Recorded on Blockchain',
-                            `Your report ID is ${data.item.id}`);
-                    }
-                    lostItemForm.reset();
-                    setTimeout(() => window.location.href = 'view-items.html', 2000);
+                    const matchMsg = data.matchFound
+                        ? `Potential match found: ${data.matchedWith}`
+                        : `Record ID: ${data.item.id}`;
+
+                    showToast({
+                        type:     'success',
+                        title:    'Report Recorded on Blockchain',
+                        message:  matchMsg,
+                        duration: 5000
+                    });
+
+                    setTimeout(() => { window.location.href = 'view-items.html'; }, 1800);
                 } else {
-                    showToast('error', 'Submission Failed', data.error || 'Please check your details and try again.');
-                    submitBtn.textContent = originalText;
+                    showToast({ type: 'error', title: 'Submission Failed', message: data.error || 'Something went wrong. Please try again.' });
+                    submitBtn.textContent = 'Submit Report';
                     submitBtn.disabled = false;
                 }
             } catch (err) {
                 console.error(err);
-                showToast('error', 'Connection Failed', 'Make sure the backend server is running.');
-                submitBtn.textContent = originalText;
+                showToast({ type: 'error', title: 'Connection Error', message: 'Failed to connect to server. Make sure the backend is running.' });
+                submitBtn.textContent = 'Submit Report';
                 submitBtn.disabled = false;
             }
         });
     }
 
-    // ===== Found Item Form =====
+    // ===== Found Item Form Handler =====
     const foundItemForm = document.getElementById('foundItemForm');
     if (foundItemForm) {
         foundItemForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const submitBtn = foundItemForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
             submitBtn.textContent = 'Submitting...';
             submitBtn.disabled = true;
 
@@ -371,7 +394,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        type: 'found',
+                        type:        'found',
                         itemName:    document.getElementById('itemName').value,
                         category:    document.getElementById('category').value,
                         location:    document.getElementById('location').value,
@@ -384,24 +407,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
 
                 if (res.ok) {
-                    if (data.matchFound) {
-                        showToast('success', 'Report Recorded + Match Found!',
-                            `ID: ${data.item.id} — A potential owner has been identified.`);
-                    } else {
-                        showToast('success', 'Report Recorded on Blockchain',
-                            `Your found item report ID is ${data.item.id}`);
-                    }
-                    foundItemForm.reset();
-                    setTimeout(() => window.location.href = 'view-items.html', 2000);
+                    const matchMsg = data.matchFound
+                        ? `Potential match found: ${data.matchedWith}`
+                        : `Record ID: ${data.item.id}`;
+
+                    showToast({
+                        type:     'success',
+                        title:    'Found Item Recorded on Blockchain',
+                        message:  matchMsg,
+                        duration: 5000
+                    });
+
+                    setTimeout(() => { window.location.href = 'view-items.html'; }, 1800);
                 } else {
-                    showToast('error', 'Submission Failed', data.error || 'Please check your details and try again.');
-                    submitBtn.textContent = originalText;
+                    showToast({ type: 'error', title: 'Submission Failed', message: data.error || 'Something went wrong. Please try again.' });
+                    submitBtn.textContent = 'Submit Report';
                     submitBtn.disabled = false;
                 }
             } catch (err) {
                 console.error(err);
-                showToast('error', 'Connection Failed', 'Make sure the backend server is running.');
-                submitBtn.textContent = originalText;
+                showToast({ type: 'error', title: 'Connection Error', message: 'Failed to connect to server. Make sure the backend is running.' });
+                submitBtn.textContent = 'Submit Report';
                 submitBtn.disabled = false;
             }
         });
@@ -437,22 +463,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                if (contactModal?.classList.contains('active')) closeContactModal();
-                else if (matchModal?.classList.contains('active')) closeMatchModal();
+                if (contactModal && contactModal.classList.contains('active')) {
+                    closeContactModal();
+                } else if (matchModal && matchModal.classList.contains('active')) {
+                    closeMatchModal();
+                }
             }
         });
 
-        // Contact form submission
+        // Contact form submission handler
         const contactForm = document.getElementById('contactForm');
         if (contactForm) {
             contactForm.addEventListener('submit', (e) => {
                 e.preventDefault();
 
                 const urlParams = new URLSearchParams(window.location.search);
-                const itemId    = urlParams.get('id');
+                const itemId = urlParams.get('id');
 
                 const contactData = {
-                    itemId:    itemId,
+                    itemId,
                     name:      document.getElementById('contactName').value,
                     email:     document.getElementById('contactEmail').value,
                     phone:     document.getElementById('contactPhone').value || null,
@@ -465,8 +494,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 contactForm.reset();
                 closeContactModal();
 
-                showToast('success', 'Message Sent!',
-                    'The finder has been notified and will reach out if it\'s a confirmed match.');
+                showToast({
+                    type:     'success',
+                    title:    'Contact Request Sent',
+                    message:  'The finder will be notified and will reach out if it\'s a confirmed match.',
+                    duration: 5000
+                });
             });
         }
     }
