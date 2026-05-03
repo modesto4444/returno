@@ -19,7 +19,7 @@
                 <span class="back-arrow">‹</span> Back to Home
             </a>
         </div>
-
+ 
         <!-- Wave Background with Form -->
         <div class="form-background">
             <div class="form-card-wrapper">
@@ -28,7 +28,7 @@
                         <h2>Report Found Item</h2>
                         <p>Your report will be recorded permanently for verification</p>
                     </div>
-
+ 
                     <form id="foundItemForm" class="report-form">
                         <!-- Item Name -->
                         <div class="form-group">
@@ -39,9 +39,8 @@
                                 name="itemName" 
                                 placeholder="e.g. Black leather wallet"
                                 required>
-                            <small class="form-hint">Be specific but avoid personal details</small>
                         </div>
-
+ 
                         <!-- Category -->
                         <div class="form-group">
                             <label for="category">Category</label>
@@ -57,7 +56,7 @@
                                 <option value="other">Other</option>
                             </select>
                         </div>
-
+ 
                         <!-- Found Location -->
                         <div class="form-group">
                             <label for="location">Found Location</label>
@@ -68,7 +67,7 @@
                                 placeholder="e.g. coffee shop, Main Street"
                                 required>
                         </div>
-
+ 
                         <!-- Date Found -->
                         <div class="form-group">
                             <label for="dateFound">Date Found</label>
@@ -78,7 +77,19 @@
                                 name="dateFound" 
                                 required>
                         </div>
-
+ 
+                        <!-- Description -->
+                        <div class="form-group">
+                            <label for="description">Item Description</label>
+                            <textarea 
+                                id="description" 
+                                name="description" 
+                                rows="3"
+                                placeholder="Describe the item in detail — color, brand, distinguishing features..."
+                                required></textarea>
+                            <small class="form-hint">The more detail, the better the match</small>
+                        </div>
+ 
                         <!-- Email Address -->
                         <div class="form-group">
                             <label for="email">Email Address</label>
@@ -90,7 +101,7 @@
                                 required>
                             <small class="form-hint">So the owner can reach you</small>
                         </div>
-
+ 
                         <!-- Thank You Notice (Green) -->
                         <div class="thankyou-notice">
                             <div class="notice-header">
@@ -99,7 +110,7 @@
                             </div>
                             <p>Your found item report will be timestamped and recorded on the blockchain, helping to verify when and where the item was found.</p>
                         </div>
-
+ 
                         <!-- Submit Button (Green) -->
                         <button type="submit" class="btn-submit btn-submit-green">
                             Submit Item Found Report
@@ -109,7 +120,114 @@
             </div>
         </div>
     </main>
-
+ 
+    <!-- ===== Success Modal ===== -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-card-wrapper">
+            <div class="modal-card">
+ 
+                <!-- Header -->
+                <div class="modal-header">
+                    <h3 class="modal-title">🎉 Report Submitted!</h3>
+                </div>
+ 
+                <!-- Success body -->
+                <div class="success-modal-body">
+ 
+                    <!-- Blockchain record confirmation -->
+                    <div class="blockchain-notice" style="margin-bottom: 0.75rem;">
+                        <div class="notice-header">
+                            <span class="info-icon">i</span>
+                            <strong>Recorded on Blockchain</strong>
+                        </div>
+                        <p>Your found item report has been permanently timestamped and recorded. Keep your record ID safe for future reference.</p>
+                    </div>
+ 
+                    <!-- Record ID -->
+                    <div class="success-id-row">
+                        <span class="success-id-label">Record ID</span>
+                        <span class="success-id-value" id="successRecordId">—</span>
+                    </div>
+ 
+                    <!-- Match found box (hidden by default, shown if matchFound) -->
+                    <div class="match-found-box" id="successMatchBox" style="display: none; margin-top: 0.75rem;">
+                        <div class="match-found-header">
+                            <span>🔗</span>
+                            <strong>Potential Match Found!</strong>
+                        </div>
+                        <p class="match-found-text">
+                            A lost item report may match what you found. Match ID:
+                            <strong id="successMatchId" style="color: #b87600;">—</strong>
+                        </p>
+                        <p class="match-found-text" style="margin-bottom: 0;">
+                            Head to the item listing to view the full match details and contact the owner.
+                        </p>
+                    </div>
+ 
+                    <!-- CTA button -->
+                    <button class="btn-submit btn-submit-green" id="successBtn" style="margin-top: 1rem;">
+                        View All Items →
+                    </button>
+                </div>
+ 
+            </div>
+        </div>
+    </div>
+ 
+    <!-- ===== Success Modal ===== -->
+    <div class="modal-overlay" id="successModal">
+        <div class="success-modal-wrapper">
+            <div class="success-modal-card">
+ 
+                <!-- Big check circle -->
+                <div class="success-check-circle">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none"
+                         stroke="#2ecc71" stroke-width="2.5"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </div>
+ 
+                <!-- Heading -->
+                <h2 class="success-heading">Report Recorded Successfully</h2>
+                <p class="success-subtext">Your report has been permanently stored on the blockchain.</p>
+ 
+                <!-- Record ID badge -->
+                <div class="success-record-id-row">
+                    <span class="success-record-label">Record ID</span>
+                    <span class="success-record-value" id="successRecordId">—</span>
+                </div>
+ 
+                <!-- Match found (hidden by default) -->
+                <div class="match-found-box" id="successMatchBox" style="display: none; margin-top: 0.75rem; text-align: left;">
+                    <div class="match-found-header">
+                        <span>🔗</span>
+                        <strong>Potential Match Found!</strong>
+                    </div>
+                    <p class="match-found-text">
+                        A lost item report may match what you found. Match ID:
+                        <strong id="successMatchId" style="color: #b87600;">—</strong>
+                    </p>
+                    <p class="match-found-text" style="margin-bottom: 0;">
+                        View the listing to see full match details and contact the owner.
+                    </p>
+                </div>
+ 
+                <!-- Info notice -->
+                <div class="success-info-notice">
+                    <span class="success-info-icon">i</span>
+                    <p>This record is tamper-proof and publicly verifiable. Save your Record ID to look it up anytime in <strong>View Reported Items</strong>.</p>
+                </div>
+ 
+                <!-- Done button -->
+                <button class="btn-submit btn-submit-green" id="successBtn">
+                    Done
+                </button>
+ 
+            </div>
+        </div>
+    </div>
+ 
     <script src="script.js"></script>
 </body>
 </html>
