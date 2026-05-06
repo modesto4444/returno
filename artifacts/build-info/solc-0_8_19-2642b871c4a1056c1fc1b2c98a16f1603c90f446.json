@@ -1,0 +1,42 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_19-2642b871c4a1056c1fc1b2c98a16f1603c90f446",
+  "solcVersion": "0.8.19",
+  "solcLongVersion": "0.8.19+commit.7dd6d404",
+  "compilerType": "solc",
+  "userSourceNameMap": {
+    "contracts/Returno.sol": "project/contracts/Returno.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "paris",
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode.linkReferences",
+            "evm.bytecode.object",
+            "evm.bytecode.opcodes",
+            "evm.bytecode.sourceMap",
+            "evm.deployedBytecode.immutableReferences",
+            "evm.deployedBytecode.linkReferences",
+            "evm.deployedBytecode.object",
+            "evm.deployedBytecode.opcodes",
+            "evm.deployedBytecode.sourceMap",
+            "evm.methodIdentifiers"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/Returno.sol": {
+        "content": "// SPDX-License-Identifier: MIT\r\npragma solidity ^0.8.0;\r\n\r\ncontract Returno {\r\n    struct Report {\r\n        string id;\r\n        string itemType;\r\n        string title;\r\n        string category;\r\n        string location;\r\n        string date;\r\n        string description;\r\n        uint256 timestamp;\r\n        address reporter;\r\n        bool hasMatch;\r\n        string matchesWith;\r\n    }\r\n\r\n    Report[] public reports;\r\n    uint256 public reportCount;\r\n\r\n    event ReportCreated(string id, string itemType, string title, address reporter, uint256 timestamp);\r\n    event MatchFound(string reportId, string matchedWith);\r\n\r\n    function submitReport(\r\n        string memory _type,\r\n        string memory _title,\r\n        string memory _category,\r\n        string memory _location,\r\n        string memory _date,\r\n        string memory _description\r\n    ) public returns (uint256) {\r\n        reportCount++;\r\n        string memory id = string(abi.encodePacked(\"BF-\", uint2str(reportCount + 845)));\r\n\r\n        reports.push(Report({\r\n            id: id,\r\n            itemType: _type,\r\n            title: _title,\r\n            category: _category,\r\n            location: _location,\r\n            date: _date,\r\n            description: _description,\r\n            timestamp: block.timestamp,\r\n            reporter: msg.sender,\r\n            hasMatch: false,\r\n            matchesWith: \"\"\r\n        }));\r\n\r\n        emit ReportCreated(id, _type, _title, msg.sender, block.timestamp);\r\n        return reportCount - 1;\r\n    }\r\n\r\n    function getAllReports() public view returns (Report[] memory) {\r\n        return reports;\r\n    }\r\n\r\n    function getReport(uint256 index) public view returns (Report memory) {\r\n        return reports[index];\r\n    }\r\n\r\n    function setMatch(uint256 indexA, uint256 indexB) public {\r\n        reports[indexA].hasMatch = true;\r\n        reports[indexA].matchesWith = reports[indexB].id;\r\n        reports[indexB].hasMatch = true;\r\n        reports[indexB].matchesWith = reports[indexA].id;\r\n        emit MatchFound(reports[indexA].id, reports[indexB].id);\r\n    }\r\n\r\n    function uint2str(uint256 _i) internal pure returns (string memory) {\r\n        if (_i == 0) return \"0\";\r\n        uint256 j = _i;\r\n        uint256 len;\r\n        while (j != 0) { len++; j /= 10; }\r\n        bytes memory bstr = new bytes(len);\r\n        uint256 k = len;\r\n        while (_i != 0) {\r\n            k--;\r\n            bstr[k] = bytes1(uint8(48 + _i % 10));\r\n            _i /= 10;\r\n        }\r\n        return string(bstr);\r\n    }\r\n}"
+      }
+    }
+  }
+}
